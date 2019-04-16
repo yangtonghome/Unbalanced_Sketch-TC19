@@ -1,0 +1,94 @@
+\documentclass[conference]{InputFiles/IEEEtran}
+
+% % % % % % % % % % package starts...% % % % % % % % % % % % % % % % % % % % %
+	\usepackage{graphicx}
+	\usepackage{balance}
+	\usepackage{amssymb, amsmath, amsthm}
+	\usepackage{multirow, rotating, wasysym, url}
+	\usepackage[tight]{subfigure}
+	%\usepackage[retainorgcmds]{InputFiles/IEEEtrantools}
+	\usepackage[ruled,linesnumbered,vlined]{algorithm2e}
+	\usepackage{hyperref} %reference hyper links.
+	\usepackage{color}
+  %\usepackage{algorithm}
+  % \usepackage{algorithmic}
+  \usepackage{algpseudocode}
+%  \usepackage{mathcal}
+ %   \usepackage{amsmath}
+% % % % % % % % % % package ends...% % % % % % % % % % % % % % % % % % % % % %
+
+
+\graphicspath{{./DrawingFigures/},{./EvaluateFigures/}}
+
+% % % % % % % % % % New command starts...% % % % % % % % % % % % % % % % % % 
+	\newcommand{\presec}{\vspace{-0in}}
+	\newcommand{\postsec}{\vspace{-0in}}
+	\newcommand{\presub}{\vspace{-0in}}
+	\newcommand{\postsub}{\vspace{-0in}}
+	\newcommand{\precaption}{\vspace{-0in}}
+	\newcommand{\postcaption}{\vspace{-0in}}
+	\newcommand{\preequation}{\vspace{-0in}}
+	\newcommand{\postequation}{\vspace{-0in}}
+	\newcommand{\prefig}{\vspace{-0in}}
+	\newcommand{\prefigcaption}{\vspace{-0in}}
+	\newcommand{\postfig}{\vspace{-0in}}
+	\newcommand{\subfigs}{\hspace{-0in}}
+	\newcommand{\subfigsvert}{\vspace{-0in}}
+	\newcommand{\pretheorem}{\vspace{-0in}}
+	\newcommand{\posttheorem}{\vspace{-0in}}
+		\input{InputFiles/new-commands}
+		\newcommand{\Proc}{Proc. }
+		\newcommand{\Conf}{Conf. }
+		\newcommand{\Inte}{Int. }
+		\newcommand{\Symp}{Symp. }
+	\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+	
+	\newcommand{\figwidthdraw}{0.45\textwidth}
+	\newcommand{\figwidtheva}{0.4\textwidth}
+	\newcommand{\aname}{CDV}
+	\newcommand{\fname}{HC}
+	\newcommand{\ccm}{C$_\text{CM}$ sketch}
+
+	
+	\definecolor{greener}{RGB}{0,166,0}
+	\definecolor{reder}{RGB}{255,0,0}
+	\definecolor{bluer}{RGB}{0,0,255}
+	
+	\clubpenalty=10000
+	\widowpenalty = 10000
+% % % % % % % % % % New command ends...% % % % % % % % % % % % % % % % % % % %
+
+% % % % % % % % % % Backup starts... % % % % % % % % % % % % % % % % % % % % %
+	%\clubpenalty=10000
+	%\widowpenalty = 10000
+	%\usepackage{caption2} %fo setlength
+	%\setlength{\parskip}{0.1\baselineskip}
+	%\setlength{\abovecaptionskip}{-1pt}
+	%\vfill\eject % force going to next page
+% % % % % % % % % % Backup ends... % % % % % % % % % % % % % % % % % % % % % %
+	
+\title{\fname: Better Parameter Settings for Sketches without Extra Costs}
+
+\title{\fname: A Probablistic Data Structure for Single Set Queries, Multiple Set Queries, and Multiset Queries}
+
+\author{Paper \#101, 6 pages}
+
+\begin{document}
+\maketitle
+\sloppy
+%\Comment
+	
+	\input{Paper/abstract}
+	\input{TongYang/introduction}
+	\input{Paper/relatedwork}
+	\input{Paper/algorithm}
+	\input{Paper/Analysis}
+	\input{Paper/experiments}
+	\input{Paper/conclusion}
+	
+	\balance
+	\bibliographystyle{unsrt}
+	\bibliography{InputFiles/reference}
+\end{document}
+
+

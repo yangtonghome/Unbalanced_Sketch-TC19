@@ -1,0 +1,119 @@
+\presec
+\section{Analysis} \postsec
+
+In this section, we carry out comprehensive mathematical analysis for our \aname~technique.
+We mainly focus on the correct rate and the error bound of the CM sketch after using our \aname~technique.
+We also give a proof of no under-estimation error for the CM sketch after using our technique.
+We call the CM sketch after using this technique the \ccm.
+
+\presub
+\subsection{Proof of No Under-estimation Error} \postsub
+
+In this subsection, we prove that \ccm has no under-estimation error. Under-estimation error means that \emph{the querying value is smaller than the real frequency.} 
+As the insertion may make counters overflow and become invalid, the set of valid arrays for the inserted item change over time. 
+For item $e$, let $S_n$ denote the set of indexes of valid arrays after $n^{th}$ insertion, and let $a_i$ denote the index of corresponding counter of item $e$ in $i^{th}$ array.
+By mathematical induction, we prove that if there is at least one valid array after $n^{th}$ insertion of item $e$, i.e. $S_n \neq \emptyset$, the \ccm~has no under-estimation error.
+
+\noindent\textbf{Base case: } Suppose $n = 1$. 
+After first insertion of item $e$, all valid counters of $e$ increase by one, so $min_{i\in S_1}\{A_i[a_i]\} \ge 1$. 
+The query result won't be smaller than $1$, which means the \ccm~has no under-estimation error in this case. 
+
+\noindent\textbf{Inductive hypothesis: } Assume when $n = k (k \ge 1)$, the \ccm~has no under-estimation error, i.e. $min_{i\in S_k}\{A_i[a_i]\} \ge k$.
+
+\noindent\textbf{Inductive step: } Suppose $n = k + 1$. 
+As $S_{k+1}\subseteq S_k$, we know before the insertion, $min_{i\in S_{k+1}}\{A_i[a_i]\} \ge k$. After the insertion of item $e$, all valid counters of $e$ increase by one, so $min_{i\in S_{k+1}}\{A_i[a_i]\} \ge k+1$. 
+The query result won't be smaller than $k+1$, which means the \ccm~has no under-estimation error in this case. 
+
+In conclusion, the \ccm~has no under-estimation error.
+
+\presub
+\subsection{Correct Rate of the \ccm} \postsub
+
+Given a multiset with N distinct items, let $e_i$ denote the $i^{th}$ item, and $f_i$ denote its frequency. If the frequency exceeds the capacity of some counters, these counters will overflow and become invalid. Without loss of generality, we assume $b_1 \le b_2 \le \dots \le b_d$, and define
+\begin{equation*}
+E_i=
+\begin{cases}
+\{e_j|1\le f_j < 2^{b_1}-1, 1\le j \le N \} & {i=1}\\
+\{e_j|2^{b_{i-1}}-1\le f_j < 2^{b_i}-1, 1\le j \le N\} & {1 < i \le d}
+\end{cases}
+\end{equation*}
+
+For items in $E_i$, their corresponding counters located in $1 \sim i-1$ arrays will overflow and become invalid.
+
+\begin{thm}
+Let $p_i$ denote the probability that one arbitrary counter in $i^{th}$ array stores the accurate value of its corresponding item. 
+$p_i$ equals to the probability that no collision happens in in one certain counter in $i^{th}$ array :
+\begin{equation}
+p_i=(\frac{w_i-1}{w_i})^{N-1} 
+\end{equation}
+
+\end{thm}
+According to the uniform property of hash function $h_i(.)$, this equation is obvious.
+
+\begin{thm}
+Let $P_i$ denote the probability that items in $E_i$ can get an accurate result when querying the \ccm. Then
+\begin{equation}
+P_i=1-\prod_{j=i}^{d}(1-p_j)
+\end{equation}
+\end{thm}
+
+\begin{proof}
+For item $e \in E_i$, if $1\le j<i$, $e$'s corresponding counters in $j^{th}$ array will overflow and the probability that it can't provide the accurate result is $1$; 
+if $i\le j \le d$, The probability that $e$ couldn't get the accurate result from its corresponding counter in $j^{th}$ array is $1-p_j$. 
+The \ccm~ fails to report an accurate result when the corresponding counters in all arrays fail to provide the accurate result, whose probability is 
+$$  P_{fail}=\prod_{j=1}^{i-1}1 \prod_{j=i}^{d}(1-p_j)=\prod_{j=i}^{d}(1-p_j) $$
+Therefore, the probability that \ccm~can report the accurate result of $e$ is $1-P_{failed}$.
+\end{proof}
+
+\begin{thm}
+Let $C$ denote the correct rate of the \ccm. Then
+\begin{equation}
+C=\sum_{i=1}^{d}\frac{|E_i|P_i}{N}
+\end{equation}
+\end{thm}
+
+\presub
+\subsection{Error Bound of the \ccm} \postsub
+
+Without loss of generality, assume $b_1 \le b_2 \le \cdots \le b_d$. 
+\begin{thm}
+For an arbituary item $e_i$, assume its corresponding counter in $t^{th}$ array doesn't overflow while ones in array $1 \sim t-1$ overflow. 
+Without loss of generality, assume all its corresponding counters in array $t \sim d$ don't overflow. 
+Let $\hat{f_i}$ denote its estimated frequency and $f_i$ denote its real frequency. 
+Let $N$ denote the number of distinct items and $V$ denote the sum of all items' real frequency, i.e. $V=\sum_{k=1}^{N}f_i$.
+Given a small variable $\epsilon$, we have the following guarantee with probability at least $1-(\epsilon w_d) ^{d-t+1}$:
+\begin{equation}
+\hat{f_i} \le f_i + \epsilon V
+\end{equation}
+\end{thm}
+
+\begin{proof}
+We define an indicator variable $I_{i,j,k}$ that is 1 if $h_j(e_i)=h_j(e_k)$, and $0$ otherwise. 
+Due to the independence of hash functions, the expectation of this indicator variable is:
+\begin{equation}
+E(I_{i,j,k})=Pr[h_j(i)=h_j(k)]=\frac{1}{w_j}\le \frac{1}{w_d}
+\end{equation}
+We define the variable $X_{i,j}$ as $X_{i,j}=\sum_{k=1}^{N}I_{i,j,k}f_k$.
+$X_{i,j}$ reflects the expectation of the error caused by the collisions happening in a counter of $j^{th}$ array. Let $R(A_i[j])$ denote the report value of $A_i[j]$, then we have
+\begin{equation}
+R(A_i[h_j(e_k)])=f_k+X_{i,j}
+\end{equation}
+The expectation of $X_{i,j}$ is:
+\begin{equation}
+E(X_{i,j})=E(\sum_{k=1}^{N}I_{i,j,k}f_k)=\sum_{k=1}^{d}f_k E(I_{i,j,k}) \le \frac{V}{w_d}
+\end{equation}
+Then, by the Markov inequality, we have:
+\begin{equation}
+\begin{aligned}
+&Pr\left[\hat{f_i} \ge f_i+\epsilon V\right] \\
+&= Pr\left[\forall _{j \ge t .~} R(A_j[h_j(e_i)])\ge f_i+\epsilon V\right] \\
+&= Pr\left[\forall _{j \ge t .~} f_i + X_{i,j}\ge f_i+\epsilon V\right] \\
+&= Pr\left[\forall _{j \ge t .~} X_{i,j}\ge \epsilon V\right] \\
+&= Pr\left[\forall _{j \ge t .~} \frac{X_{i,j}}{E(X_{i,j})}\ge \epsilon w_d\right] \\
+&\le \left\{E\left[\frac{X_{i,j}}{E(X_{i,j})}\right]/(\epsilon w_d)\right\}^{d-t+1} \\
+&= (\epsilon w_d)^{d-t+1}
+\end{aligned}
+\end{equation}
+\end{proof}
+
+

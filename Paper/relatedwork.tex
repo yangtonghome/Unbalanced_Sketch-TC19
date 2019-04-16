@@ -1,0 +1,31 @@
+\presec
+\section{Related Work} \postsec
+
+As data stream processing becomes more and more important these days, it becomes more difficult for conventional approaches to work at a high speed. Therefore, many approaches have been proposed in recent years, including sketches and counter variants.
+
+The CM and CU sketch have been introduced in the previous section. To overcome the limitations of these conventional sketches, several improvements are proposed. For example, the Augmented Sketch (ASketch) \cite{roy2016augmented} is proposed by Roy \etal
+An ASketch consists of a conventional CM sketch and a filter that contains frequencies for \texttt{hot items}.
+When inserting an item $e$, it first checks whether $e$ is in the filter.
+If so, it directly increments the corresponding counter in the filter by 1. Otherwise, it inserts it into the CM sketch.
+After each insertion, it will reorganize the filter to guarantee the items with highest frequencies are in the filter.
+%The Count-min-log sketch (CML sketch) \cite{cmlsketch} is proposed by Pitel \etal
+%It solves the problem of counter overflows.
+%Different from the CM sketch, the CML sketch uses logarithm-based approximate counters rather than linear counters. It increments its counters with logarithmic probabilities instead of incrementing in all cases.
+%Therefore, counters in the CML sketch are able to contain a much larger frequency.
+%However, all these approaches have significant shortcomings.
+However, the ASketch only achieves higher accuracy for a certain number of \texttt{hot items}, but does not enhance the overall accuracy of all items.
+%The CML sketch introduces bigger errors when storing large frequencies.
+
+There are also several counter-based approaches aiming to solve the problem faced by conventional sketches.
+The most typical one is the Counter Braids \cite{lu2008counter}.
+The Counter Braids uses a layered structure.
+When inserting \texttt{cold items}, it only increments the counters in the first layer.
+While when inserting \texttt{hot items}, counters in the first layer may overflow and those in deeper layers will be incremented.
+The Counter Braids can achieve 100\% accuracy in most cases, and is also memory efficient.
+However, it does not support instant query, which means that we can only query the item frequencies after inserting all items.
+
+%Furthermore, most of these approaches stated above mainly focus on \texttt{hot items}.
+%However, in many applications \texttt{cold items} are as important as \texttt{hot items}.
+As mentioned above, all these approaches have obvious shortcomings, including low overall accuracy, not supporting certain functions, \etc
+Therefore, these approaches may have poor performance in their applications.
+The design goal of our proposed technique is to enhance the overall accuracy for sketches with few extra costs.

@@ -1,0 +1,72 @@
+\presec
+\section{Introduction} \postsec
+
+\presub
+\subsection{Background and Motivation} \postsub
+
+In today's computer science, estimating the frequency of items in a multiset is a very important problem.
+A multiset is a set in which items can appear more than once.
+This problem has been studied in various of fields, such as data stream processing \cite{charikar2002finding,aggarwal2010on,manerikar2009frequent,thomas2009on}, network traffic analysis \cite{liu2016one,chen2010tracking}, natural language processing (NLP) \cite{goyal2012sketch,goyal2009streaming}, data graph \cite{zhao2011gsketch:}, distributed databases \cite{cormode2005sketching}, social network \cite{aggarwal2012event}, \etc
+As the speed of data streams becoming faster and faster, it becomes more difficult to achieve accurate estimation for item frequencies, and thus many approximate approaches using probabilistic data structures are being widely used and studied.
+Among all these approximate approaches, sketches \cite{sketchsurvey} are considered the most successful one due to their high accuracy and fast speed.
+
+A sketch is a probabilistic data structure that can be used to store the frequencies of items in a multiset. 
+Compared to other methods for frequency query, sketches are more memory efficient and can achieve faster speed and higher accuracy.
+Therefore, sketches are widely used for the problem of estimating item frequencies.
+%Therefore, sketches are widely used in various kinds of applications, such as data stream processing, distributed datasets, natural language processing, and network traffic analysis.
+Typical sketches include CM sketches \cite{cormode2005an} and CU sketches \cite{estan2001new}. A CM sketch consists of $d$ arrays, $A_1, A_2 \dots A_d$, and each array consists of $w$ counters. Furthermore, each array is associated a hash function $h_i(.) (1\leqslant i\leqslant d)$.
+When inserting an item $e$, the CM sketch first computes these $d$ hash functions, $h_1(e), h_2(e) \dots h_d(e)$, and maps the item to $d$ counters, $A_1[h_1(e)], A_2[h_2(e)] \dots A_d[h_d(e)]$. Then it increments these $d$ mapped counters by 1.
+When querying an item $e$, the CM sketch just reports the minimum value from these $d$ mapped counters.
+The CU sketch has the same structure and query process as the CM sketch, but it only increments the mapped counters with minimum values instead of incrementing all of them when performing insertion processes.
+According to the analysis of real datasets, we found that most real datasets are non-uniform, which means that in most datasets, most items have a small frequency, while only a few items have a high frequency.
+For convenience, we call items with a small frequency \texttt{cold items}, and those with a high frequency \texttt{hot items}.
+However, all conventional sketches are unable to deal with this issue, because they are difficult to find a proper counter size to fit these non-uniform datasets.
+Therefore, there are many counters containing a small number (typically less than 10), and it is definitely a waste of memory.
+With a fixed memory size, the accuracy of sketches could be poor due to the big waste of memory.
+
+To address this issue, there are many improved approaches, such as Augmented sketch (ASketch) \cite{roy2016augmented}, Counter Braids (CB) \cite{lu2008counter}, \etc
+The ASketch adds a filter to a CM sketch, which contains frequencies for a certain number of \texttt{hot items}.
+Therefore, the ASketch achieves higher accuracy than conventional sketches in terms of \texttt{hot items}.
+However, the average accuracy of all items is not improved.
+The Counter Braids can dynamically allocate more counter size for \texttt{hot items}, and can achieve 100\% accuracy in most cases.
+However, the Counter Braids does not support instant query, which means we can only query the frequencies of items after inserting all items.
+Note that prior approaches still have some shortcomings as mentioned above.
+To address this issue, we propose a novel technique, which can enable sketches perform better on these non-uniform datasets without extra costs like more memory accesses or more computations.
+%Note that prior approaches still have some shortcomings, and only focus on \texttt{hot items}.
+%However, we claim that in many applications, \texttt{cold items} are as important as \texttt{hot items}, and thus we cannot simply overlook their existence.
+%For example, ...
+%However, most prior approaches have poor performance on these \texttt{cold items}.
+%To address this issue, we propose a novel technique, which can enable sketches perform better on these non-uniform datasets without extra costs like more memory accesses and more computation.
+
+\presub
+\subsection{Proposed Approach} \postsub
+
+In this paper, we propose a novel technique for sketches, named \fname~(\aname), which enables sketches to perform better accuracy on non-uniform datasets without extra costs.
+\textit{One of the key principles of our \aname~technique is to use different parameters, including width and counter size, for different arrays in a sketch.}
+To be specific, we use geometric progression to generate counter sizes for arrays in the sketch.
+For example, we use a counter size of 2 bits for the first array, 4 bits for the second array, 8 bits for the third array, \etc
+%Usually, a sketch has 4 arrays and a counter size of 16 bits is enough to contain the maximum frequency among all items.
+A sketch usually has 4 arrays, and a counter size of 16 bits is enough to contain the maximum frequency among all items.
+Furthermore, we also use different width for each array, and typically we set a larger width for the array with smaller counter size.
+Note that in most real datasets, most items have a small frequency (about half of items have a frequency no larger than 2).
+The larger width for the array with smaller counter size has two following advantages: 1) it saves memory usage because the counter size is small. 2) it reduces the probability of hash collisions, and thus enhances the accuracy significantly.
+%Therefore, the accuracy of all items increases.
+
+\textit{The second principle of our \aname~technique is to treat counter overflows as flags that indicates the counter is mapped by items with larger frequencies than the capacity of the counter.}
+As stated above, we may use a counter size of only 2 bits for the first array, and thus counter overflows will happen frequently in this array.
+If we simply treat these overflowed counters as usual, then we will get illogical results.
+For example, if we apply our \aname~technique to a CM sketch, when querying an arbitrary item, we can only get an estimated result smaller than 4, and then errors of \texttt{hot items} will be very huge.
+Therefore, we should treat counter overflows differently: we simply ignore these overflowed values, and do not take these values into account when performing query processes.
+
+There are two important advantages of our \aname~technique:
+1) our \aname~technique can significantly increase the accuracy for non-uniform datasets.
+2) our \aname~technique will introduce few extra costs, such as more computational cost, more memory accesses, \etc
+
+\presub
+\subsection{Key Contributions} \postsub
+
+\begin{enumerate}
+	\item First, we propose a novel technique for sketches, named \fname~(\aname), which can significantly increase the accuracy of sketches on non-uniform datasets with few extra costs.
+	\item Second, we carry out comprehensive mathematical analysis and extensize experiments, and the results prove that our \aname~has a great advantage over conventional sketches and the state-of-the-art in terms of accuracy.
+	\item Third, we place all related source codes of our \aname~technique at our homepage.
+\end{enumerate}
